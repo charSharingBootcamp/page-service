@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" lang="en">
+<head>
+    <title>charSharing Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script th:src="@{${pageUrl}+'/resources/static/js/page.js'}"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,500,600,700,800,900&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+
+
+</head>
+
+<style>
+h1 {
+  font-family: verdana;
+  font-size: 50px;
+  text-align: center;
+  color: #991F3D;
+}
+h2 {
+  font-family: verdana;
+  font-size: 20px;
+  text-align: center;
+}
+
+label {
+   font-family: verdana;
+   font-size: 15px;
+}
+body {
+	height: 100%;
+	font-family: "Work Sans", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	font-smoothing: antialiased;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  margin-right: 150px;
+  margin-left: 80px;
+}
+
+.navbar {
+  background-color: #E61739;
+  border-color: #E61739;
+  color: white;
+}
+
+.navbar-collapse.collapse {
+  background-color: #E61739;
+}
+
+.navbar-inverse .navbar-brand {
+  color: white;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: white;
+}
+
+p {
+  font-family: verdana;
+  font-size: 15px;
+}
+
+.text-bubble{
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+
+
+
+
+
+
+
+</style>
+
+
+<body>
+<header>
+    <div class="navbar navbar-inverse navbar-top" th:fragment="header">
+        <div class="navbar-header">
+            <a class="navbar-brand" th:href="@{${startURL}}">charSharing</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li th:classappend="${module == 'createDocument' ? 'active' : ''}">
+                    <a th:href="@{${startURL}}">Home</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li th:classappend="${module == 'profile' ? 'active' : ''}">
+                    <a th:href="@{${startURL}}">Neues Dokument erstellen</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="row">
+    <div class="form-group">
+        <h1 id="pageTitle" th:text="${document.title}"/>
+    </div>
+</div>
+
+<div>
+    <ul class="nav nav-tabs">
+        <li th:each="tab: ${document.content}" th:id="${'tabBtn-' + tabStat.index}">
+            <a data-toggle="tab" th:href="${'#tab-' + tabStat.index}" class="tab-link"
+               th:text="${tab.title}">
+            </a>
+        </li>
+        <li><a id="addTabLink" data-toggle="modal" data-target="#addTabModal">Neuer Tab</a></li>
+    </ul>
+
+</div>
+
+<div align="right">
+    <Button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+        <span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span>
+    </Button>
+</div>
+
+
+<div class="tab-content">
+    <div th:each="tab:${document.content}" th:id="${'tab-' + tabStat.index}" class="tab-pane">
+        <div th:each="block:${tab.textBlocks}" class=" m-3 p-2 border border-danger rounded-lg">
+            <div th:id="${'view-' + block.id}">
+                <div class="d-flex flex-row justify-content-start text-bubble">
+                    <p th:unless="${block.code}"
+                       data-th-utext="${#strings.replace(#strings.escapeXml(block.content),'&#10;','&lt;br&gt;')}"></p>
+                    <code th:if="${block.code}"
+                          data-th-utext="${#strings.replace(#strings.escapeXml(block.content),'&#10;','&lt;br&gt;')}"></code>
+                </div>
+                <div class="d-flex flex-row justify-content-end">
+
+                    <div class="mr-3">
+                        <button class="edit-button btn-sm btn-danger" th:name="${block.id}">Bearbeiten</button>
+                        <a th:href="${pageUrl}+${document.title + '/'+ tabStat.index + '/' + block.id}"
+                           class="btn-sm btn-danger">Kommentare</a>
+                    </div>
+                    <div class="align-self-end">
+                        <span  th:if="${!#strings.isEmpty(block.updatedBy)}" class="float-right ml-3"
+                        th:text="${'Geändert: ' + block.updatedBy + ' ' + block.updatedAt}"></span>
+                  <span class="float-right" th:text="${block.creator + ' ' + block.createdAt}"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div th:id="${'edit-' + block.id}" style="display: none;">
+                <textarea th:id="${'text-' + block.id}" th:text="${block.content}" style="width: 100%;" ></textarea>
+                <div class="mr-3">
+                    <label>Name:</label>
+                    <input th:id="${'name-' + block.id}" th:field="${documentFormModel.userName}"/>
+                    <button class="edit-save-button btn-sm btn-danger" th:tabIndex="${tabStat.index}" th:name="${block.id}">Abschicken</button>
+                    <button class=" ml-2 edit-cancel-button btn-sm btn-danger" th:name="${block.id}">Abbrechen</button>
+                    <span th:id="${'name-error-' + block.id}" style="display: none;">Bitte Namen eingeben</span>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="${pageUrl} + ${document.title + '/' + tabStat.index}" id="submitForm" method="POST">
+            <div class="form-group" style="padding-top: 30px;">
+                <label for="exampleFormControlTextarea">Eingabefeld:</label>
+                <textarea th:field="${documentFormModel.text}" class="form-control input-text-area"
+                          id="exampleFormControlTextarea" onkeyup="handTextInput(this)"
+                          rows="10" th:tabindex="${tabStat.index}"></textarea>
+            </div>
+            <div th:if="${nameError}">
+                <span>Bitte Namen eingeben</span>
+            </div>
+            <label for="nameInput">Name:</label>
+            <input id="nameInput" th:field="${documentFormModel.userName}"/>
+            <button type="submit" class="btn btn-default btnSubmit" th:disabled=true
+                    style="background-color: #991F3D; color: white;">Abschicken
+            </button>
+            <label for="codeCheckbox">Code</label>
+            <input type="checkbox" class="" id="codeCheckbox" th:field="${documentFormModel.code}"/>
+        </form>
+
+    </div>
+</div>
+<div class="modal" id="addTabModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Tab hinzufügen</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <label for="tabNameInput">Name des neuen Tabs:</label>
+                <input id="tabNameInput"/>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button id="addTabBtn" type="button" class="btn btn-danger" data-dismiss="modal">Hinzufügen</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">QR-Code</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body text-center">
+                <img th:src=${qrcode} height=\"230\" width=\"390\" class="mx-auto d-block">
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fertig</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

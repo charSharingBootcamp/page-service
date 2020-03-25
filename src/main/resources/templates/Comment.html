@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" lang="en">
+<head>
+    <title>charSharing Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    <!-- der Pfad muss hier noch auf dynamisch & für lokal+live kompatibel angepasst werden -->
+    <script th:src="@{${pageUrl}+'/resources/static/js/comment.js'}"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,500,600,700,800,900&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+
+</head>
+
+<style>
+    h1 {
+        font-family: verdana;
+        font-size: 50px;
+        text-align: center;
+        color: #991F3D;
+    }
+
+    h2 {
+        font-family: verdana;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    label {
+        font-family: verdana;
+        font-size: 15px;
+    }
+
+    body {
+        height: 100%;
+        font-family: "Work Sans", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-smoothing: antialiased;
+        margin-top: 50px;
+        margin-bottom: 100px;
+        margin-right: 150px;
+        margin-left: 80px;
+    }
+
+    .navbar {
+        background-color: #E61739;
+        border-color: #E61739;
+        color: white;
+    }
+
+    .navbar-collapse.collapse {
+        background-color: #E61739;
+    }
+
+    .navbar-inverse .navbar-brand {
+        color: white;
+    }
+
+    .navbar-inverse .navbar-nav > li > a {
+        color: white;
+    }
+
+    p {
+        font-family: verdana;
+        font-size: 15px;
+    }
+
+    .border-5 {
+        border-style: solid;
+        border-width: 5px;
+    }
+
+
+    a, u {
+        text-decoration: none;
+        color: #000000;
+    }
+
+</style>
+
+
+<body>
+<header>
+    <div class="navbar navbar-inverse navbar-top" th:fragment="header">
+        <div class="navbar-header">
+            <a class="navbar-brand" th:href="@{${startURL}}">charSharing</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li th:classappend="${module == 'createDocument' ? 'active' : ''}">
+                    <a th:href="@{${startURL}}">Home</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li th:classappend="${module == 'profile' ? 'active' : ''}">
+                    <a th:href="@{${startURL}}">Neues Dokument erstellen</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div class="d-flex m-3" id="commentid">
+    <div class="p-2 border-danger border-5 rounded-lg">
+        <a th:href="@{${pageUrl} +''+ ${documentTitle}}" data-th-utext="${#strings.replace(#strings.escapeXml(block.content),'&#10;','&lt;br&gt;')}"></a>
+    </div>
+</div>
+
+<div th:each="comment:${comments}" class="m-3 p-2 border border-danger rounded-lg">
+    <div class="d-flex flex-row justify-content-start">
+        <p data-th-utext="${#strings.replace(#strings.escapeXml(comment.content),'&#10;','&lt;br&gt;')}"></p>
+    </div>
+    <div class="d-flex flex-row justify-content-end">
+        <span class="float-right" th:text="${comment.creator + ' ' + comment.createdAt}"></span>
+    </div>
+</div>
+
+<form id="submitForm" method="POST">
+    <div class="form-group" style="padding-top: 30px;">
+        <label for="exampleFormControlTextarea">Eingabefeld:</label>
+        <textarea th:field="${commentFormModel.text}" class="form-control" id="exampleFormControlTextarea"
+                  rows="10"></textarea>
+    </div>
+    <div th:if="${nameError}">
+        <span>Bitte Namen eingeben</span>
+    </div>
+    <label for="nameInput">Name:</label>
+    <input id="nameInput" th:field="${commentFormModel.userName}"/>
+    <button type="submit" class="btn btn-default" id="btnSubmit" th:disabled=true
+            style="background-color: #991F3D; color: white;">Abschicken
+    </button>
+</form>
+
+</body>
+</html>
